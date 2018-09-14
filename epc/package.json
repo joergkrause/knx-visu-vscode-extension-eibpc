@@ -5,34 +5,87 @@
   "version": "0.0.1",
   "publisher": "joergisageek",
   "engines": {
-      "vscode": "^1.27.0"
+    "vscode": "^1.27.0"
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test"
   },
   "categories": [
-      "Programming Languages"
+    "Programming Languages"
   ],
+  "activationEvents": [
+    "onCommand:extension.sayHello"
+  ],
+  "main": "./out/extension",
   "contributes": {
-      "languages": [{
-          "id": "epc",
-          "aliases": ["EibPC", "epc"],
-          "extensions": [".epc"],          
-          "configuration": "./language-configuration.json"
-      }],
-      "grammars": [{
-          "language": "epc",
-          "scopeName": "source.epc",
-          "path": "./syntaxes/epc-debug.tmLanguage.json"
-      }],
-      "snippets": [
+    "configuration": [
+      {
+        "title": "EPC encoding",
+        "properties": {
+          "files.encoding.notsethere": {
+            "type": "string",
+            "default": "windows1252"
+          }
+        }
+      }
+    ],
+    "views": {
+      "explorer": [
         {
-          "language": "epc",
-          "path": "./snippets/epc-snippets.json"
-      }],
-      "themes": [
-        {
-            "label": "EibPC",
-            "uiTheme": "vs",
-            "path": "./themes/epc.color-theme.json"
+          "id": "esfDependencies",
+          "name": "ESF imports from ETS"
         }
       ]
+    },
+    "commands": [
+      {
+        "command": "extension.sayHello",
+        "title": "EPC:Welcome"
+      },
+      {
+        "command": "extension.importESF",
+        "title": "EPC:Import *.esf file (export from ETS)"
+      }
+    ],
+    "languages": [
+      {
+        "id": "epc",
+        "aliases": [
+          "EibPC",
+          "epc"
+        ],
+        "extensions": [
+          ".epc"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "epc",
+        "scopeName": "source.epc",
+        "path": "./syntaxes/epc-debug.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "epc",
+        "path": "./snippets/epc-snippets.json"
+      }
+    ],
+    "themes": [
+      {
+        "label": "EibPC",
+        "uiTheme": "vs",
+        "path": "./themes/epc.color-theme.json"
+      }
+    ]
+  },
+  "dependencies": {
+    "typescript": "^3.0.3",
+    "vscode": "^1.1.21"
   }
 }

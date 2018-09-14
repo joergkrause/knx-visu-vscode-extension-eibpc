@@ -265,7 +265,7 @@
       "patterns": [
         {
           "name": "support.function.knx.epc",
-          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(address|getaddress|gaimage|readknx|readrawknx)(?=\\s*\\()"
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(address|getaddress|gaimage|readknx|readrawknx|writeflashvar|readflashvar)(?=\\s*\\()"
         }
       ]
     },
