@@ -18,7 +18,7 @@
   ],
   "activationEvents": [
     "onCommand:extension.sayHello",
-    "onCommand:extension.importESF",    
+    "onCommand:extension.importESF",
     "onView:esfExplorer"
   ],
   "main": "./out/extension",
@@ -38,7 +38,34 @@
       "explorer": [
         {
           "id": "esfExplorer",
-          "name": "ESF imports from ETS"
+          "name": "Addresses (ESF imports from ETS)"
+        },
+        {
+          "id": "epcMacros",
+          "name": "Macros (Entertex libraries)"
+        }
+      ],
+      "nconf-interactive": [
+        {
+          "id": "nconf-view-knx",
+          "name": "KNX Interface"
+        },
+        {
+          "id": "nconf-view-eibpc",
+          "name": "EibPC"
+        },
+        {
+          "id": "nconf-view-options",
+          "name": "Options"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "nconf-interactive",
+          "title": "Entertex EibPC Explorer",
+          "icon": "resources/package-explorer.svg"
         }
       ]
     },
@@ -68,7 +95,7 @@
         },
         {
           "command": "esfExplorer.openFile"
-        }       
+        }
       ]
     },
     "languages": [
@@ -105,8 +132,7 @@
       }
     ]
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^10.9.4",
     "typescript": "^3.0.3",
