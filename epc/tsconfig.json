@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "lib": [
+      "es2015"
+    ],
     "outDir": "./out",
+    "moduleResolution": "node",
     "types": [
-      "vscode"
+      "vscode", "node"
     ]
   },
   "files": [

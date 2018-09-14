@@ -17,7 +17,9 @@
     "Programming Languages"
   ],
   "activationEvents": [
-    "onCommand:extension.sayHello"
+    "onCommand:extension.sayHello",
+    "onCommand:extension.importESF",    
+    "onView:esfExplorer"
   ],
   "main": "./out/extension",
   "contributes": {
@@ -35,7 +37,7 @@
     "views": {
       "explorer": [
         {
-          "id": "esfDependencies",
+          "id": "esfExplorer",
           "name": "ESF imports from ETS"
         }
       ]
@@ -43,13 +45,32 @@
     "commands": [
       {
         "command": "extension.sayHello",
-        "title": "EPC:Welcome"
+        "title": "EPC: Welcome"
       },
       {
         "command": "extension.importESF",
-        "title": "EPC:Import *.esf file (export from ETS)"
+        "title": "EPC: Import *.esf file (export from ETS)"
+      },
+      {
+        "command": "esfExplorer.openFile",
+        "title": "EPC: Import and view *.esf file (export from ETS)"
       }
     ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "extension.importESF"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "extension.importESF"
+        },
+        {
+          "command": "esfExplorer.openFile"
+        }       
+      ]
+    },
     "languages": [
       {
         "id": "epc",
@@ -85,6 +106,9 @@
     ]
   },
   "dependencies": {
+  },
+  "devDependencies": {
+    "@types/node": "^10.9.4",
     "typescript": "^3.0.3",
     "vscode": "^1.1.21"
   }
