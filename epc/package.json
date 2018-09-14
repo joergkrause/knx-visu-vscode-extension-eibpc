@@ -1,26 +1,38 @@
 {
-    "name": "epc",
-    "displayName": "eibstudio",
-    "description": "Edit EPC files for the Smart Home Controller EibPC.",
-    "version": "0.0.1",
-    "publisher": "joergisageek",
-    "engines": {
-        "vscode": "^1.27.0"
-    },
-    "categories": [
-        "Programming Languages"
-    ],
-    "contributes": {
-        "languages": [{
-            "id": "epc",
-            "aliases": ["EibPC", "epc"],
-            "extensions": [".epc"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "epc",
-            "scopeName": "home.epc",
-            "path": "./syntaxes/epc.tmLanguage.json"
-        }]
-    }
+  "name": "epc",
+  "displayName": "eibstudio",
+  "description": "Edit EPC files for the Smart Home Controller EibPC.",
+  "version": "0.0.1",
+  "publisher": "joergisageek",
+  "engines": {
+      "vscode": "^1.27.0"
+  },
+  "categories": [
+      "Programming Languages"
+  ],
+  "contributes": {
+      "languages": [{
+          "id": "epc",
+          "aliases": ["EibPC", "epc"],
+          "extensions": [".epc"],          
+          "configuration": "./language-configuration.json"
+      }],
+      "grammars": [{
+          "language": "epc",
+          "scopeName": "source.epc",
+          "path": "./syntaxes/epc-debug.tmLanguage.json"
+      }],
+      "snippets": [
+        {
+          "language": "epc",
+          "path": "./snippets/epc-snippets.json"
+      }],
+      "themes": [
+        {
+            "label": "EibPC",
+            "uiTheme": "vs",
+            "path": "./themes/epc.color-theme.json"
+        }
+      ]
+  }
 }

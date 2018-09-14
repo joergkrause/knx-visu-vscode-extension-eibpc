@@ -1,0 +1,372 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "EibPC",
+  "scopeName": "source.epc",
+  "patterns": [
+    {
+      "include": "#expression"
+    }
+  ],
+  "repository": {
+    "expression": {
+      "name": "meta.expression.sqf",
+      "patterns": [
+        {
+          "include": "#string"
+        },
+        {
+          "include": "#groupaddress"
+        },
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#control-statement"
+        },
+        {
+          "include": "#literal"
+        },
+        {
+          "include": "#support-objects"
+        },
+        {
+          "include": "#variable-assignment"
+        },
+        {
+          "include": "#section"
+        }
+      ]
+    },
+    "qstring-double": {
+      "patterns": [
+        {
+          "begin": "\\$",
+          "end": "\\$(c\\d{1,4})?",
+          "name": "string.double.epc"    
+        }
+      ]
+    },
+    "qstring-groupaddress": {
+      "patterns": [
+        {
+          "begin": "'",
+          "end": "'([ubf]\\d{1,2})",
+          "name": "string.groupaddress.epc"              
+        }
+      ]
+    },
+    "qstring-groupaddress-name": {
+      "patterns": [
+        {
+          "begin": "\"",
+          "end": "\"",
+          "name": "string.groupaddress.name.epc"              
+        }
+      ]
+    },
+    "string": {
+      "name": "string.epc",
+      "patterns": [
+        {
+          "include": "#qstring-double"
+        }
+      ]
+    },
+    "groupaddress": {
+      "name": "groupaddress.epc",
+      "patterns": [
+        {
+          "include": "#qstring-groupaddress"
+        },
+        {
+          "include": "#qstring-groupaddress-name"
+        }
+      ]
+    },
+    "comment": {
+      "name": "comment.epc",
+      "patterns": [
+        {
+          "include": "#comment-line"
+        }
+      ]
+    },
+    "comment-line": {
+      "name": "comment.line.epc",
+      "patterns": [
+        {
+          "match": "(//).*$\\n?"
+        }
+      ]            
+    },
+    "paren-expression": {
+      "begin": "\\(",
+      "beginCaptures": {
+        "0": {
+          "name": "meta.brace.round.js"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "meta.brace.round.js"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "literal": {
+      "patterns": [
+        {
+          "include": "#numeric-literal"
+        },
+        {
+          "include": "#boolean-literal"
+        },
+        {
+          "include": "#numericConstant-literal"
+        }
+      ]
+    },
+    "numeric-literal": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.js",
+          "match": "\\b(?<!\\$)\\d*([ubf]\\d{1,2})\\b(?!\\$)"
+        },
+        {
+          "match": "(?x)\n(?<!\\$)(?:\n  (?:\\b[0-9][0-9_]*(\\.)[0-9][0-9_]*[eE][+-]?[0-9][0-9_]*\\b)| # 1.1E+3\n  (?:\\b[0-9][0-9_]*(\\.)[eE][+-]?[0-9][0-9_]*\\b)|             # 1.E+3\n  (?:\\B(\\.)[0-9][0-9_]*[eE][+-]?[0-9][0-9_]*\\b)|             # .1E+3\n  (?:\\b[0-9][0-9_]*[eE][+-]?[0-9][0-9_]*\\b)|                 # 1E+3\n  (?:\\b[0-9][0-9_]*(\\.)[0-9][0-9_]*\\b)|                      # 1.1\n  (?:\\b[0-9][0-9_]*(\\.)\\B)|                                  # 1.\n  (?:\\B(\\.)[0-9][0-9_]*\\b)|                                  # .1\n  (?:\\b[0-9][0-9_]*\\b(?!\\.))                                 # 1\n)(?!\\$)",
+          "captures": {
+            "0": {
+              "name": "constant.numeric.decimal.js"
+            },
+            "1": {
+              "name": "meta.delimiter.decimal.period.js"
+            },
+            "2": {
+              "name": "meta.delimiter.decimal.period.js"
+            },
+            "3": {
+              "name": "meta.delimiter.decimal.period.js"
+            },
+            "4": {
+              "name": "meta.delimiter.decimal.period.js"
+            },
+            "5": {
+              "name": "meta.delimiter.decimal.period.js"
+            },
+            "6": {
+              "name": "meta.delimiter.decimal.period.js"
+            }
+          }
+        }
+      ]
+    },
+    "boolean-literal": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.true.js",
+          "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))true(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+        },
+        {
+          "name": "constant.language.boolean.false.js",
+          "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))false(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+        }
+      ]
+    },
+    "numericConstant-literal": {
+      "patterns": [
+        {
+          "name": "constant.language.off.js",
+          "match": "(\\s*|[=])(OFF)|(AUS)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+        },
+        {
+          "name": "constant.language.on.js",
+          "match": "(\\s*|[=])(ON)|(EIN)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+        }
+      ]
+    },
+    "support-objects-math": {
+      "patterns": [
+        {
+          "name": "support.function.math.epc",
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(abs|acos|asin|atan|ceil|floor|exp|log|mod|pow|sin|sqrt|tan)(?=\\s*\\()"
+        }
+      ]
+    },
+    "support-objects-size": {
+      "patterns": [
+        {
+          "name": "support.function.size.epc",
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(average|min|max)(?=\\s*\\()"
+        }
+      ]
+    },
+    "support-objects-time": {
+      "patterns": [
+        {
+          "name": "support.function.time.epc",
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(after|afterc|delay|delayc|(c?[whms]time))(?=\\s*\\()"
+        }
+      ]
+    },
+    "support-objects-sync": {
+      "patterns": [
+        {
+          "name": "support.function.sync.epc",
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(dayofweek|([gs]et(time|date|timedate))|hour|minute|second|(change(hour|minute|second)|utc|utcconvert|utctime))(?=\\s*\\()"
+        }
+      ]
+    },
+    "support-objects-date": {
+      "patterns": [
+        {
+          "name": "support.function.date.epc",
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(date|month|day)(?=\\s*\\()"
+        }
+      ]
+    },
+    "support-objects-sun": {
+      "patterns": [
+        {
+          "name": "support.function.sun.epc",
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(azimuth|elevation|presun|sun|(sun(riseminute|risehour|setminute|sethour)))(?=\\s*\\()"
+        }
+      ]
+    },
+    "support-objects-bus": {
+      "patterns": [
+        {
+          "name": "support.function.bus.epc",
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(read|write|event|eventread|eventresponse|eventwrite|writereponse)(?=\\s*\\()"
+        }
+      ]
+    },
+    "support-objects-net": {
+      "patterns": [
+        {
+          "name": "support.function.net.epc",
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(closetcp|connecttcp|ping|readtcp|readudp|resolve|sendmail|sendhtmlmail|sendtcp|sendtcparray|sendudp|webbutton|webdisplay|webchart)(?=\\s*\\()"
+        }
+      ]
+    },
+    "support-objects-string": {
+      "patterns": [
+        {
+          "name": "support.function.string.epc",
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(capacity|encode|find|size|split|(string(cast|format|set)))(?=\\s*\\()"
+        }
+      ]
+    },
+    "support-objects-knx": {
+      "patterns": [
+        {
+          "name": "support.function.knx.epc",
+          "match": "(?x)(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(address|getaddress|gaimage|readknx|readrawknx)(?=\\s*\\()"
+        }
+      ]
+    },
+    "support-objects": {
+      "patterns": [
+        {
+          "include": "#support-objects-math"
+        },
+        {
+          "include": "#support-objects-size"
+        },
+        {
+          "include": "#support-objects-time"
+        },
+        {
+          "include": "#support-objects-sync"
+        },
+        {
+          "include": "#support-objects-date"
+        },
+        {
+          "include": "#support-objects-sun"
+        },
+        {
+          "include": "#support-objects-bus"
+        },
+        {
+          "include": "#support-objects-net"
+        },
+        {
+          "include": "#support-objects-string"
+        },
+        {
+          "include": "#support-objects-knx"
+        }
+      ]
+    },
+    "control-statement": {
+      "patterns": [
+        {
+          "match": "\\s*(?i)(then|else|if|endif)\\b",
+          "name": "keyword.control.epc"
+        }
+      ]
+    },
+    "variable-initializer": {
+			"patterns": [
+				{
+					"begin": "(?<!=|!)(=)(?!=)(?=\\s*\\S)",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.operator.assignment.epc"
+						}
+					},
+					"end": "(?=$|^|[,);}\\]])",
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				},
+				{
+					"begin": "(?<!=|!)(=)(?!=)",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.operator.assignment.epc"
+						}
+					},
+					"end": "(?=[,);}\\]])|(?=^\\s*$)|(?<=\\S)(?<!=)(?=\\s*$)",
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				}
+			]
+		},
+    "variable-assignment": {
+      "patterns": [
+        {
+          "include": "#variable-initializer"
+        }
+      ]
+    },
+    "section": {
+      "patterns": [
+        {
+          "begin": "\\[",
+          "end": "\\]",
+          "name": "section.epc"    
+        }
+      ]
+    },
+    "macros": {
+      "patterns": [
+        {
+          "match": "$#(include)\\s*",
+          "name": "macro.include.epc"
+        }
+      ]
+    }
+
+  }
+}
