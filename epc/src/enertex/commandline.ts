@@ -120,6 +120,36 @@ const nconf =
         Verzeichnis ueber gespeicherte Bilder fuer den Webserver erstellen:
             nconf -G [IP-Adresse] [Portnummer von nconf (optional)]
 
+
+-t 
+
+{Eingehendes KNX-Telegramm: bc 10 05 29 16 85 00 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 19:59:44}}
+{Eingehendes KNX-Telegramm: bc 10 05 29 0c 85 00 80 00 00 b8 c2 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 19:59:45}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 29 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 19:59:46}}
+{Eingehendes KNX-Telegramm: bc 10 08 2a 0b 85 00 80 00 00 00 a4 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 19:59:47}}
+{Eingehendes KNX-Telegramm: bc 10 08 2a 0e 85 00 80 00 02 83 85 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 19:59:48}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 24 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:00:06}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 29 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:00:26}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 24 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:00:46}}
+{Eingehendes KNX-Telegramm: bc 10 03 02 29 82 00 80 26 00 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:00:50}}
+{Eingehendes KNX-Telegramm: bc 11 c9 10 fb 81 00 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:00:56}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 24 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:01:06}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 24 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:01:26}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 33 83 00 80 00 8c 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:01:40}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 24 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:01:46}}
+{Eingehendes KNX-Telegramm: bc 10 03 02 29 82 00 80 26 00 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:01:57}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 24 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:02:06}}
+{Eingehendes KNX-Telegramm: bc 10 0b 19 16 83 00 80 0c 80 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:02:08}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 33 83 00 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:02:16}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:02:26}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:02:46}}
+{Eingehendes KNX-Telegramm: bc 10 03 02 29 82 00 80 26 00 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:03:03}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:03:06}}
+
+D:\Apps\private\knx-visu-vscode-extension-eibpc\epc\resources>nconf -t 192.168.0.12
+{Eingehendes KNX-Telegramm: bc 11 c9 07 47 83 00 80 07 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:03:26}}
+{Eingehendes KNX-Telegramm: bc 11 c9 07 33 83 00 80 00 81 00 00 00 00 00 00 00 00 00 00 00 00 00 {2018-09-15 20:03:42}}
+
  * 
  */
 

@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Import the module and reference it with the alias vscode in your code below
 var vscode = require("vscode");
 var esfexplorer_1 = require("./esfexplorer/esfexplorer");
+var nconfprovider_1 = require("./nconfdata/nconfprovider");
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate(context) {
@@ -12,6 +13,7 @@ function activate(context) {
     console.log('Extension "EibPC Editor" is now active!');
     // EsfExplorer registers itself
     new esfexplorer_1.EsfExplorer(context);
+    new nconfprovider_1.NconfProvider(context);
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json

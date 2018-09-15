@@ -1,14 +1,4 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -46,30 +36,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode = require("vscode");
-var stream = require("stream");
 var fs = require("fs");
 var csv = require('csv');
+var iconv = require('iconv-lite');
+var es = require('event-stream');
 var entry_1 = require("./entry");
-var EsfTransformer = /** @class */ (function (_super) {
-    __extends(EsfTransformer, _super);
+var EsfTransformer = /** @class */ (function () {
     function EsfTransformer(entries) {
-        var _this = _super.call(this, { objectMode: true, highWaterMark: 1 }) || this;
-        _this.entries = entries;
-        return _this;
+        this.entries = entries;
     }
-    EsfTransformer.prototype._write = function (obj, _enc, cb) {
-        var data = obj[0];
+    EsfTransformer.prototype.parse = function (data, cb) {
+        if (data.length < 4)
+            return;
         // data is an Array of 4 (Structure, Name, DataType, Flag)
         var struct = data[0].split('.');
-        var hg = struct[0], md = struct[1], ga = struct[2];
-        var _a = struct[2].split('/'), gahg = _a[0], gamd = _a[1], gaad = _a[2];
+        var hg = struct[0], mg = struct[1], ga = struct[2];
+        var _a = struct[2].split('/'), gahg = _a[0], gamg = _a[1], gaad = _a[2];
         var name = data[1];
         var type = data[2];
         var flag = data[3];
         // main group does not exists?
         if (this.entries.filter(function (d) { return d.name === hg; }).length === 0) {
+            console.log('Add HG ' + hg);
             this.entries.push({
                 name: hg,
+                rawnumber: +gahg,
                 fullName: gahg + " " + hg,
                 type: entry_1.EntryType.MainGroup
             });
@@ -81,29 +72,33 @@ var EsfTransformer = /** @class */ (function (_super) {
             hgEntry.children = new Array();
         }
         // does the middle group exists?
-        if (hgEntry.children.filter(function (d) { return d.name === md; }).length === 0) {
+        if (hgEntry.children.filter(function (d) { return d.name === mg; }).length === 0) {
             hgEntry.children.push({
-                name: md,
-                fullName: gamd + " " + md,
+                name: mg,
+                rawnumber: +gamg,
+                fullName: gamg + " " + mg,
                 type: entry_1.EntryType.MiddleGroup
             });
         }
-        var addressEntry = hgEntry.children.filter(function (d) { return d.name === md; })[0];
+        var addressEntry = hgEntry.children.filter(function (d) { return d.name === mg; })[0];
         // does group has children?
         if (!addressEntry.children) {
             addressEntry.children = new Array();
         }
         // no test here, we assume that the export cannot export the same item twice
         addressEntry.children.push({
-            name: gaad + " " + name,
+            name: ga,
+            rawnumber: +gaad,
             fullName: gaad + " " + name + " (" + type + ")",
-            type: type,
-            initGA: flag === 'Low' ? false : true // TODO: this is wrong!    
+            type: entry_1.EntryType.Address,
+            initGA: flag === 'Low' ? false : true // TODO: this is wrong!
         });
-        cb();
+        if (cb) {
+            cb();
+        }
     };
     return EsfTransformer;
-}(stream.Writable));
+}());
 var FileSystemProvider = /** @class */ (function () {
     function FileSystemProvider(file) {
         this.file = file;
@@ -114,51 +109,70 @@ var FileSystemProvider = /** @class */ (function () {
     // CSV entry looks like this:
     // Beleuchtung.Zentral.1/0/5    Licht Zentral AU (nur Handfunktionen)     EIS 1 'Switching' (1 Bit)     Low
     FileSystemProvider.prototype.createEntries = function () {
-        var input = fs.createReadStream(this.file, { encoding: 'latin1' });
+        var reader = fs
+            .createReadStream(this.file)
+            .pipe(iconv.decodeStream('windows1252'));
         console.log('Create ESF Entries: Stream Read');
-        var parser = csv.parse({
-            from: 2,
-            rtrim: true,
-            skip_empty_lines: true,
-        });
-        var transformer = csv.transform(function (record) {
-            return record.map(function (value) {
-                console.log(value);
-                return value.split('\t');
-            });
-        });
         var esfTransformer = new EsfTransformer(this.entries);
-        input
-            .pipe(parser)
-            .pipe(transformer)
-            .pipe(esfTransformer);
+        reader.pipe(es.split()).pipe(es
+            .mapSync(function (line) {
+            esfTransformer.parse(line.split('\t'));
+        })
+            .on('error', function (err) { return console.error('Err: ' + err); })
+            .on('end', function () {
+            console.log('End');
+        }));
         console.log('Create ESF Entries: Stream Parsed');
     };
     // tree data provider, get the raw tree
     FileSystemProvider.prototype.getChildren = function (element) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_a) {
-                if (this.entries) {
-                    return [2 /*return*/, new Promise(function () {
-                            return _this.entries;
-                        })];
+            var children, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!element) {
+                            this.entries = this.entries.sort(function (hg) { return hg.rawnumber <= hg.rawnumber ? -1 : 1; });
+                            this.entries.map(function (e) {
+                                if (e.children) {
+                                    e.children = e.children.sort(function (mg) { return mg.rawnumber <= mg.rawnumber ? -1 : 1; });
+                                    e.children.map(function (i) {
+                                        if (i.children) {
+                                            i.children = i.children.sort(function (ga) { return ga.rawnumber <= ga.rawnumber ? -1 : 1; });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        if (!!element) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.entries];
+                    case 1:
+                        _a = _b.sent();
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, element.children];
+                    case 3:
+                        _a = _b.sent();
+                        _b.label = 4;
+                    case 4:
+                        children = _a;
+                        return [2 /*return*/, children];
                 }
-                return [2 /*return*/, []];
             });
         });
     };
     // makes tree items from entries
     FileSystemProvider.prototype.getTreeItem = function (element) {
-        var treeItem = new vscode.TreeItem("element.name (" + element.dataType + element.typeLen + ")");
+        var treeItem = new vscode.TreeItem("" + element.fullName, vscode.TreeItemCollapsibleState.Expanded);
         if (element.type === entry_1.EntryType.Address) {
             treeItem.command = {
                 command: 'esfExplorer.insertGroupAddress',
                 title: 'Insert Address',
                 arguments: [element.name]
             };
+            treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
             treeItem.contextValue = 'address';
         }
+        treeItem.tooltip = "(" + entry_1.EntryType[element.type] + ")";
         return treeItem;
     };
     return FileSystemProvider;

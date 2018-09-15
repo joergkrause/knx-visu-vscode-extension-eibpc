@@ -19,9 +19,10 @@ export enum EntryType {
 export interface Entry {
   name: string;
   type: EntryType;
+  rawnumber: number;
   fullName?: string;
   dataType?: DataType;
-  typeLen?: TypeLen;
+  typeLen?: TypeLen;  
   initGA?: boolean;
   children?: Entry[];
 }
