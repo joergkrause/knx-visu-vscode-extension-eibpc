@@ -1,4 +1,14 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -36,178 +46,122 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode = require("vscode");
-var path = require("path");
+var stream = require("stream");
 var fs = require("fs");
-var filestat_1 = require("./filestat");
-var filefunctions_1 = require("./filefunctions");
-var FileSystemProvider = /** @class */ (function () {
-    function FileSystemProvider() {
-        this._onDidChangeFile = new vscode.EventEmitter();
-        this._fileFunctions = new filefunctions_1.FileFunctions();
+var csv = require('csv');
+var entry_1 = require("./entry");
+var EsfTransformer = /** @class */ (function (_super) {
+    __extends(EsfTransformer, _super);
+    function EsfTransformer(entries) {
+        var _this = _super.call(this, { objectMode: true, highWaterMark: 1 }) || this;
+        _this.entries = entries;
+        return _this;
     }
-    FileSystemProvider.prototype.createDirectory = function (uri) {
-        throw new Error('Method not implemented.');
-    };
-    FileSystemProvider.prototype.writeFile = function (uri, content, options) {
-        throw new Error('Method not implemented.');
-    };
-    FileSystemProvider.prototype.delete = function (uri, options) {
-        throw new Error('Method not implemented.');
-    };
-    FileSystemProvider.prototype.rename = function (oldUri, newUri, options) {
-        throw new Error('Method not implemented.');
-    };
-    FileSystemProvider.prototype.copy = function (source, destination, options) {
-        throw new Error('Method not implemented.');
-    };
-    FileSystemProvider.prototype.getParent = function (element) {
-        throw new Error('Method not implemented.');
-    };
-    Object.defineProperty(FileSystemProvider.prototype, "onDidChangeFile", {
-        get: function () {
-            return this._onDidChangeFile.event;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    FileSystemProvider.prototype.watch = function (uri, options) {
-        var _this = this;
-        var watcher = fs.watch(uri.fsPath, { recursive: options.recursive }, function (event, filename) { return __awaiter(_this, void 0, void 0, function () {
-            var filepath, _a, _b, _c, _d;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
-                    case 0:
-                        filepath = path.join(uri.fsPath, this._fileFunctions.normalizeNFC(filename.toString()));
-                        // TODO support excludes (using minimatch library?)
-                        _b = (_a = this._onDidChangeFile).fire;
-                        _c = {};
-                        if (!(event === 'change')) return [3 /*break*/, 1];
-                        _d = vscode.FileChangeType.Changed;
-                        return [3 /*break*/, 3];
-                    case 1: return [4 /*yield*/, this._fileFunctions.exists(filepath)];
-                    case 2:
-                        _d = (_e.sent())
-                            ? vscode.FileChangeType.Created
-                            : vscode.FileChangeType.Deleted;
-                        _e.label = 3;
-                    case 3:
-                        // TODO support excludes (using minimatch library?)
-                        _b.apply(_a, [[
-                                (_c.type = _d,
-                                    _c.uri = uri.with({ path: filepath }),
-                                    _c)
-                            ]]);
-                        return [2 /*return*/];
-                }
+    EsfTransformer.prototype._write = function (obj, _enc, cb) {
+        var data = obj[0];
+        // data is an Array of 4 (Structure, Name, DataType, Flag)
+        var struct = data[0].split('.');
+        var hg = struct[0], md = struct[1], ga = struct[2];
+        var _a = struct[2].split('/'), gahg = _a[0], gamd = _a[1], gaad = _a[2];
+        var name = data[1];
+        var type = data[2];
+        var flag = data[3];
+        // main group does not exists?
+        if (this.entries.filter(function (d) { return d.name === hg; }).length === 0) {
+            this.entries.push({
+                name: hg,
+                fullName: gahg + " " + hg,
+                type: entry_1.EntryType.MainGroup
             });
-        }); });
-        return { dispose: function () { return watcher.close(); } };
+        }
+        // after that we retrieve the one and only entry
+        var hgEntry = this.entries.filter(function (d) { return d.name === hg; })[0];
+        // already has children?
+        if (!hgEntry.children) {
+            hgEntry.children = new Array();
+        }
+        // does the middle group exists?
+        if (hgEntry.children.filter(function (d) { return d.name === md; }).length === 0) {
+            hgEntry.children.push({
+                name: md,
+                fullName: gamd + " " + md,
+                type: entry_1.EntryType.MiddleGroup
+            });
+        }
+        var addressEntry = hgEntry.children.filter(function (d) { return d.name === md; })[0];
+        // does group has children?
+        if (!addressEntry.children) {
+            addressEntry.children = new Array();
+        }
+        // no test here, we assume that the export cannot export the same item twice
+        addressEntry.children.push({
+            name: gaad + " " + name,
+            fullName: gaad + " " + name + " (" + type + ")",
+            type: type,
+            initGA: flag === 'Low' ? false : true // TODO: this is wrong!    
+        });
+        cb();
     };
-    FileSystemProvider.prototype.stat = function (uri) {
-        return this._stat(uri.fsPath);
-    };
-    FileSystemProvider.prototype._stat = function (path) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = filestat_1.FileStat.bind;
-                        return [4 /*yield*/, this._fileFunctions.stat(path)];
-                    case 1: return [2 /*return*/, new (_a.apply(filestat_1.FileStat, [void 0, _b.sent()]))()];
-                }
+    return EsfTransformer;
+}(stream.Writable));
+var FileSystemProvider = /** @class */ (function () {
+    function FileSystemProvider(file) {
+        this.file = file;
+        this.entries = new Array();
+        console.log('Create ESF Entries');
+        this.createEntries();
+    }
+    // CSV entry looks like this:
+    // Beleuchtung.Zentral.1/0/5    Licht Zentral AU (nur Handfunktionen)     EIS 1 'Switching' (1 Bit)     Low
+    FileSystemProvider.prototype.createEntries = function () {
+        var input = fs.createReadStream(this.file, { encoding: 'latin1' });
+        console.log('Create ESF Entries: Stream Read');
+        var parser = csv.parse({
+            from: 2,
+            rtrim: true,
+            skip_empty_lines: true,
+        });
+        var transformer = csv.transform(function (record) {
+            return record.map(function (value) {
+                console.log(value);
+                return value.split('\t');
             });
         });
+        var esfTransformer = new EsfTransformer(this.entries);
+        input
+            .pipe(parser)
+            .pipe(transformer)
+            .pipe(esfTransformer);
+        console.log('Create ESF Entries: Stream Parsed');
     };
-    FileSystemProvider.prototype.readDirectory = function (uri) {
-        return this._readDirectory(uri);
-    };
-    FileSystemProvider.prototype._readDirectory = function (uri) {
-        return __awaiter(this, void 0, void 0, function () {
-            var children, result, i, child, stat;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this._fileFunctions.readdir(uri.fsPath)];
-                    case 1:
-                        children = _a.sent();
-                        result = [];
-                        i = 0;
-                        _a.label = 2;
-                    case 2:
-                        if (!(i < children.length)) return [3 /*break*/, 5];
-                        child = children[i];
-                        return [4 /*yield*/, this._stat(path.join(uri.fsPath, child))];
-                    case 3:
-                        stat = _a.sent();
-                        result.push([child, stat.type]);
-                        _a.label = 4;
-                    case 4:
-                        i++;
-                        return [3 /*break*/, 2];
-                    case 5: return [2 /*return*/, Promise.resolve(result)];
-                }
-            });
-        });
-    };
-    FileSystemProvider.prototype.readFile = function (uri) {
-        return this._fileFunctions.readfile(uri.fsPath);
-    };
-    // tree data provider
+    // tree data provider, get the raw tree
     FileSystemProvider.prototype.getChildren = function (element) {
         return __awaiter(this, void 0, void 0, function () {
-            var children, workspaceFolder, children;
+            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!element) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.readDirectory(element.uri)];
-                    case 1:
-                        children = _a.sent();
-                        return [2 /*return*/, children.map(function (_a) {
-                                var name = _a[0], type = _a[1];
-                                return ({
-                                    uri: vscode.Uri.file(path.join(element.uri.fsPath, name)),
-                                    type: type
-                                });
-                            })];
-                    case 2:
-                        workspaceFolder = vscode.workspace.workspaceFolders.filter(function (folder) { return folder.uri.scheme === 'file'; })[0];
-                        if (!workspaceFolder) return [3 /*break*/, 4];
-                        return [4 /*yield*/, this.readDirectory(workspaceFolder.uri)];
-                    case 3:
-                        children = _a.sent();
-                        children.sort(function (a, b) {
-                            if (a[1] === b[1]) {
-                                return a[0].localeCompare(b[0]);
-                            }
-                            return a[1] === vscode.FileType.Directory ? -1 : 1;
-                        });
-                        return [2 /*return*/, children.map(function (_a) {
-                                var name = _a[0], type = _a[1];
-                                return ({
-                                    uri: vscode.Uri.file(path.join(workspaceFolder.uri.fsPath, name)),
-                                    type: type
-                                });
-                            })];
-                    case 4: return [2 /*return*/, []];
+                if (this.entries) {
+                    return [2 /*return*/, new Promise(function () {
+                            return _this.entries;
+                        })];
                 }
+                return [2 /*return*/, []];
             });
         });
     };
+    // makes tree items from entries
     FileSystemProvider.prototype.getTreeItem = function (element) {
-        var treeItem = new vscode.TreeItem(element.uri, element.type === vscode.FileType.Directory
-            ? vscode.TreeItemCollapsibleState.Collapsed
-            : vscode.TreeItemCollapsibleState.None);
-        if (element.type === vscode.FileType.File) {
+        var treeItem = new vscode.TreeItem("element.name (" + element.dataType + element.typeLen + ")");
+        if (element.type === entry_1.EntryType.Address) {
             treeItem.command = {
-                command: 'fileExplorer.openFile',
-                title: 'Open File',
-                arguments: [element.uri]
+                command: 'esfExplorer.insertGroupAddress',
+                title: 'Insert Address',
+                arguments: [element.name]
             };
-            treeItem.contextValue = 'file';
+            treeItem.contextValue = 'address';
         }
         return treeItem;
     };
     return FileSystemProvider;
 }());
 exports.FileSystemProvider = FileSystemProvider;
+//# sourceMappingURL=filesystemprovider.js.map

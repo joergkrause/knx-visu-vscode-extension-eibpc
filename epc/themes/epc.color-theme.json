@@ -15,7 +15,8 @@
 		{
 			"name": "Comments",
 			"scope": [
-				"comment",
+        "comment",
+        "comment.line.epc",
 				"punctuation.definition.comment"
 			],
 			"settings": {

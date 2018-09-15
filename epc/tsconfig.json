@@ -6,6 +6,7 @@
     ],
     "outDir": "./out",
     "moduleResolution": "node",
+    "sourceMap": true,
     "types": [
       "vscode", "node"
     ]

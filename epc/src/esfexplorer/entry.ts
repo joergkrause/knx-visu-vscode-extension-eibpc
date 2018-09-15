@@ -1,6 +1,27 @@
 import * as vscode from 'vscode';
 
+export enum DataType {
+  u,
+  b,
+  f,  
+  c
+}
+
+export type TypeLen = number;
+
+export enum EntryType {
+  MainGroup,
+  MiddleGroup,
+  Group,
+  Address
+}
+
 export interface Entry {
-  uri: vscode.Uri;
-  type: vscode.FileType;
+  name: string;
+  type: EntryType;
+  fullName?: string;
+  dataType?: DataType;
+  typeLen?: TypeLen;
+  initGA?: boolean;
+  children?: Entry[];
 }

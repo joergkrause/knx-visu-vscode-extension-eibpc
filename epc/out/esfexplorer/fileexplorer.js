@@ -15,7 +15,24 @@ var FileExplorer = /** @class */ (function () {
         context.subscriptions.push(of);
     }
     FileExplorer.prototype.openResource = function (resource) {
-        vscode.window.showTextDocument(resource);
+        var options = {
+            canSelectMany: false,
+            openLabel: 'Open',
+            defaultUri: resource,
+            filters: {
+                'ESF files': ['esf'],
+                'All files': ['*']
+            }
+        };
+        vscode.window.showOpenDialog(options).then(function (fileUri) {
+            if (fileUri && fileUri[0]) {
+                var file = fileUri[0].fsPath;
+                console.log("Selected file: " + file);
+                // read the CSV and pump the values to tree view
+                // Display a message box to the user
+                vscode.window.showInformationMessage("The import of " + file + " was successful.");
+            }
+        });
     };
     return FileExplorer;
 }());

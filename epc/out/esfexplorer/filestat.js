@@ -63,3 +63,4 @@ var FileStat = /** @class */ (function () {
     return FileStat;
 }());
 exports.FileStat = FileStat;
+//# sourceMappingURL=filestat.js.map

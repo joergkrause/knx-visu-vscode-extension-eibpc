@@ -1,8 +1,8 @@
 {
   "name": "epc",
   "displayName": "eibstudio",
-  "description": "Edit EPC files for the Smart Home Controller EibPC.",
-  "version": "0.0.1",
+  "description": "Edit EPC files for the Smart Home Controller Entertex EibPC.",
+  "version": "0.0.2",
   "publisher": "joergisageek",
   "engines": {
     "vscode": "^1.27.0"
@@ -18,7 +18,7 @@
   ],
   "activationEvents": [
     "onCommand:extension.sayHello",
-    "onCommand:extension.importESF",
+    "onCommand:esfExplorer.openFile",
     "onView:esfExplorer"
   ],
   "main": "./out/extension",
@@ -65,7 +65,7 @@
         {
           "id": "nconf-interactive",
           "title": "Entertex EibPC Explorer",
-          "icon": "resources/package-explorer.svg"
+          "icon": "resources/enertex.png"
         }
       ]
     },
@@ -75,24 +75,17 @@
         "title": "EPC: Welcome"
       },
       {
-        "command": "extension.importESF",
-        "title": "EPC: Import *.esf file (export from ETS)"
-      },
-      {
         "command": "esfExplorer.openFile",
-        "title": "EPC: Import and view *.esf file (export from ETS)"
+        "title": "EPC: Import *.esf file (export from ETS)"
       }
     ],
     "menus": {
       "commandPalette": [
         {
-          "command": "extension.importESF"
+          "command": "esfExplorer.openFile"
         }
       ],
       "view/title": [
-        {
-          "command": "extension.importESF"
-        },
         {
           "command": "esfExplorer.openFile"
         }
@@ -115,7 +108,7 @@
       {
         "language": "epc",
         "scopeName": "source.epc",
-        "path": "./syntaxes/epc-debug.tmLanguage.json"
+        "path": "./syntaxes/epc.tmLanguage.json"
       }
     ],
     "snippets": [
@@ -132,7 +125,9 @@
       }
     ]
   },
-  "dependencies": {},
+  "dependencies": {
+    "csv": "^3.1.0"
+  },
   "devDependencies": {
     "@types/node": "^10.9.4",
     "typescript": "^3.0.3",
