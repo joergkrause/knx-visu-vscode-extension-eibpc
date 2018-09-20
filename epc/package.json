@@ -30,7 +30,7 @@
       {
         "title": "EPC encoding",
         "properties": {
-          "files.encoding.notsethere": {
+          "files.encoding": {
             "type": "string",
             "default": "windows1252"
           }

@@ -1,20 +1,44 @@
-# epc README
+# KNX Visu Projects
 
-This is the README for your extension "epc". After writing up a brief description, we recommend including the following sections.
+This is part of a series of projects dedicated to Smart Home control using KNX technology. The purpose is mainly to investigate the ability to create advanced, sophisticated functions, controllers, and user interfaces using pure Open Source technology and state-of-the-art web technologies. Especially all my projects are done with:
 
-## Features
+* NodeJS
+* Angular
+* MongoDb
+* AWS Lambda functions
+* Amazon Alexa 
+* TypeScript / JavaScript
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+The hardware part is Raspyberry Pi, using
 
-For example if there is an image subfolder under your extension project workspace:
+* Windows 10 IoT for kiosk/display apps
+* Raspbian OS for controllers
 
-\!\[feature X\]\(images/feature-x.png\)
+I'm using two commercial products:
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+* Weinzierl IP Interface 771
+* Enertex EibPC with Web Interface
+
+On the long way I'm going to replace the Enertex EibPC with the technology stack described before. The goal is to show that it is possible to replace a € 700 device with a € 30 Raspberry and some OS software without loosing any of the functionality.
+
+## Features of this Project
+
+This project is an extension to Visual Studio Code. It's primary purpose is to support a commercial product, the Enertex EibPC. But it's also a way to provide a text based interface to program the controller. There is another project that uses Node-Red, where I'm going to write a node that imports EFS files from ETS 4 (or ETS 5) and gives the user the ability to easily retrieve the right group address to select the IoT-device one want to control.
+
+This extension in particular has these features:
+
+> Import ESF file and create a group address tree
+> Invoke these addresses and send values to devices
+> Edit an *.epc file as used by the Enertex EibPC, complete with syntax highlighting and language support
+> Send data to EibPC using the provided command line tools `nconf` and `eibparser`.
+> Monitor messages from IP interface
+> Set some settings on EibPC
+
+So far, the goal is to replace the program "EibStudio" with something far more advanced.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+This runs everywhere you can start Visual Studio Code. You need EibPC up and running in the local network and an IP Interface to KNX.
 
 ## Extension Settings
 
@@ -24,12 +48,11 @@ For example:
 
 This extension contributes the following settings:
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+* `files.encoding`: Default encoding of code file, is set to `windows1252` for the EibPC and must be set to `utf8` for the NodeRed/Raspberry device
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+It's work in progress, keep an eye on it for updates.
 
 ## Release Notes
 
@@ -37,29 +60,20 @@ Users appreciate release notes as you update your extension.
 
 ### 1.0.0
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
+Initial release of with extension is planned for december 2018.
 
 ### For more information
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+These websites are partially in German.
+
+* [NodeJS](http://code.visualstudio.com/docs/languages/markdown)
+* [Node Red](https://help.github.com/articles/markdown-basics/)
+* [Raspberry](https://help.github.com/articles/markdown-basics/)
+* [KNX Home](https://help.github.com/articles/markdown-basics/)
+* [Enertex](https://help.github.com/articles/markdown-basics/)
+* [Enertex EibPC](https://help.github.com/articles/markdown-basics/)
+* [Weinzierl](https://help.github.com/articles/markdown-basics/)
+* [Writing VS Code extensions](https://help.github.com/articles/markdown-basics/)
+* [About me](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**
