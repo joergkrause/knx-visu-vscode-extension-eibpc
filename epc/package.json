@@ -17,9 +17,11 @@
     "Programming Languages"
   ],
   "activationEvents": [
+    "onLanguage:epc",
     "onCommand:extension.sayHello",
     "onCommand:esfExplorer.openFile",
     "onView:esfExplorer",
+    "onView:epcMacros",
     "onView:nconf-view-knx"
   ],
   "main": "./out/extension",
@@ -65,7 +67,7 @@
       "activitybar": [
         {
           "id": "nconf-interactive",
-          "title": "Entertex EibPC Explorer",
+          "title": "Enertex EibPC Explorer",
           "icon": "resources/enertex.png"
         }
       ]
@@ -73,13 +75,74 @@
     "commands": [
       {
         "command": "extension.sayHello",
-        "title": "EPC: Welcome"
+        "title": "Show instructions",
+        "category": "EibPC"
       },
       {
         "command": "esfExplorer.openFile",
-        "title": "EPC: Import *.esf file (export from ETS)"
+        "title": "Import *.esf file (export from ETS)",
+        "category": "EibPC"
+      },
+      {
+        "command": "esfExplorer.refresh",
+        "title": "Refresh Dependecies",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+      },
+      {
+        "command": "esfExplorer.insertGroupAddress",
+        "title": "Insert GA into code",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+      },
+      {
+        "command": "esfExplorer.writeToBus",
+        "title": "Write value to bus",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
       }
     ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "esfExplorer.refresh",
+          "when": "resourceLangId == epc",
+          "group": "navigation",
+          "icon": {
+            "light": "resources/light/refresh.svg",
+            "dark": "resources/dark/refresh.svg"
+          }
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "esfExplorer.insertGroupAddress",
+          "when": "resourceLangId == epc",
+          "group": "Action"
+        },
+        {
+          "command": "esfExplorer.writeToBus",          
+          "group": "Action"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "extension.sayHello",
+          "group": "Action"
+        },
+        {
+          "command": "esfExplorer.openFile",
+          "when": "resourceLangId == epc",
+          "group": "EibPC"
+        }
+      ]
+    },
     "languages": [
       {
         "id": "epc",
